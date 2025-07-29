@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProject>
+    <meshes>
+        <mesh>domain.vtu</mesh>
+        <mesh>physical_group_top.vtu</mesh>
+        <mesh>physical_group_bottom.vtu</mesh>
+        <mesh>physical_group_left.vtu</mesh>
+        <mesh>physical_group_right.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>SD</name>
+            <type>SMALL_DEFORMATION</type>
+            <integration_order>2</integration_order>
+            <constitutive_relation id="*">
+                <type>LinearElasticIsotropic</type>
+                <youngs_modulus>E</youngs_modulus>
+                <poissons_ratio>nu</poissons_ratio>
+            </constitutive_relation>
+            <reference_temperature>T0</reference_temperature>
+            <process_variables>
+                <process_variable>displacement</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+            </secondary_variables>
+            <specific_body_force>0. -9.81</specific_body_force>
+           <initial_stress> sigma0 </initial_stress>
+        </process>
+    </processes>
+    <media>
+        <medium id="*">
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2.e3</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+            </properties>
+        </medium>
+    </media>
+    <time_loop>
+        <processes>
+            <process ref="SD">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>PerComponentDeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstols>1.e-12 1.e-12</abstols>
+                    <reltols>1.e-12 1.e-12</reltols>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>100</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat> 10 </repeat>
+                            <delta_t> 10 </delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>init</prefix>
+            <suffix>_ts_{:timestep}_t_{:0.0etime:}</suffix>
+            <output_iteration_results>false</output_iteration_results>
+            <timesteps>
+                <pair>
+                    <repeat>1</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+            </variables>
+            <fixed_output_times>
+            </fixed_output_times>
+        </output>
+    </time_loop>
+    <parameters>
+        <parameter>
+            <name>E</name>
+            <type>Constant</type>
+            <value>6.5e9</value>
+            </parameter>
+        <parameter>
+            <name>nu</name>
+            <type>Constant</type>
+            <value>.23</value>
+        </parameter>
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>T0</name>
+            <type>Constant</type>
+            <value>300</value>
+        </parameter>
+        <parameter>
+          <name>sigma0</name>
+          <type>Function</type>
+          <expression>2000*9.81*y</expression>
+          <expression>2000*9.81*y</expression>
+          <expression>0.23*2*(2000*9.81*y)</expression>
+          <expression>0</expression>
+        </parameter>
+        <parameter>
+            <name>geo_stress</name>
+            <type>Function</type>
+            <expression>-2000*9.81*y</expression>
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>physical_group_left</mesh>
+                    <type>NormalTraction</type>
+                    <component>0</component>
+                    <parameter>geo_stress</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>physical_group_bottom</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>physical_group_bottom</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>physical_group_right</mesh>
+                    <type>NormalTraction</type>
+                    <component>0</component>
+                    <parameter>geo_stress</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>physical_group_top</mesh>
+                    <type>NormalTraction</type>
+                    <component>1</component>
+                    <parameter>geo_stress</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>30</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <!-- <solver_type>PardisoLU</solver_type>
+                <scaling>true</scaling> -->
+            </eigen>
+            <petsc>
+                <parameters>
+                    -ksp_type bcgs
+                    -pc_type lu -pc_factor_mat_solver_type mkl_pardiso
+                </parameters>
+            </petsc>
+            <lis>-i bicgstab -p ilut -tol 1e-18 -maxiter 10000</lis>
+        </linear_solver>
+    </linear_solvers>
+</OpenGeoSysProject>
