@@ -24,10 +24,10 @@ def create_rectangle_mesh(
     p4 = gmsh.model.occ.addPoint(0.0,    z - height/2, 0.0, mesh_size)
     gmsh.model.occ.synchronize()
 
-    l1 = gmsh.model.occ.addLine(p1, p2)
-    l2 = gmsh.model.occ.addLine(p2, p3)
-    l3 = gmsh.model.occ.addLine(p3, p4)
-    l4 = gmsh.model.occ.addLine(p4, p1)
+    l1 = gmsh.model.occ.addLine(p2, p1)
+    l2 = gmsh.model.occ.addLine(p1, p4)
+    l3 = gmsh.model.occ.addLine(p4, p3)
+    l4 = gmsh.model.occ.addLine(p3, p2)
     gmsh.model.occ.synchronize()
 
     cl   = gmsh.model.occ.addCurveLoop([l1, l2, l3, l4])
@@ -36,7 +36,7 @@ def create_rectangle_mesh(
 
     pg_domain = gmsh.model.addPhysicalGroup(2, [surf])
     gmsh.model.setPhysicalName(2, pg_domain, "domain")
-    bcs = [("top", l1), ("right", l2), ("bottom", l3), ("left", l4)]
+    bcs = [("top", l1), ("left", l2), ("bottom", l3), ("right", l4)]
     for name, line in bcs:
         pg = gmsh.model.addPhysicalGroup(1, [line])
         gmsh.model.setPhysicalName(1, pg, name)
@@ -110,11 +110,20 @@ def create_rectangle_frac_mesh(
         gmsh.model.addPhysicalGroup(2, [surf1], name="top_surf")
         gmsh.model.addPhysicalGroup(2, [surf2], name="bot_surf")
         gmsh.model.addPhysicalGroup(1, [l7], name="fracture")
-    
+     
+        gmsh.model.addPhysicalGroup(1, [l6], name="right_top")
+        gmsh.model.addPhysicalGroup(1, [l2], name="left_top")
+        gmsh.model.addPhysicalGroup(1, [l5], name="right_bottom")
+        gmsh.model.addPhysicalGroup(1, [l3], name="left_bottom")
+        gmsh.model.addPhysicalGroup(0, [p4], name="p4")
+        
+        gmsh.model.addPhysicalGroup(1, [l1], name="top")
+        gmsh.model.addPhysicalGroup(1, [l4], name="bottom")
+  
+
     gmsh.model.mesh.generate(2)
     gmsh.write(str(filepath.with_suffix(".msh")))
     gmsh.finalize()
-
 
 def create_cube_mesh(
     filepath: Path,

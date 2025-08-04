@@ -1,10 +1,22 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
-    <mesh>domain_fracture.vtu</mesh>
-    <mesh>physical_group_top_fracture.vtu</mesh>
-    <mesh>physical_group_bottom_fracture.vtu</mesh>
-    <mesh>physical_group_left_fracture.vtu</mesh>
-    <mesh>physical_group_right_fracture.vtu</mesh>
+    <meshes>
+        <mesh>domain_fracture.vtu</mesh>
+        <mesh>physical_group_top_fracture.vtu</mesh>
+        <mesh>physical_group_bottom_fracture.vtu</mesh>
+
+        <mesh>physical_group_fracture_fracture.vtu</mesh>
+        
+        <mesh>physical_group_top_surf_fracture.vtu</mesh>
+        <mesh>physical_group_bot_surf_fracture.vtu</mesh>
+
+        <mesh>physical_group_right_top_fracture.vtu</mesh>
+        <mesh>physical_group_left_top_fracture.vtu</mesh>
+
+        <mesh>physical_group_right_bottom_fracture.vtu</mesh>
+        <mesh>physical_group_left_bottom_fracture.vtu</mesh>
+    </meshes>
+
     <processes>
         <process>
             <name>SD</name>
@@ -27,7 +39,7 @@
                 <tension_cutoff>1</tension_cutoff>
             </fracture_model>
             <fracture_properties>
-                <material_id>1</material_id>
+                <material_id>2</material_id>
                 <initial_aperture>aperture0</initial_aperture>
             </fracture_properties>
             <secondary_variables>
@@ -135,24 +147,51 @@
             <components>2</components>
             <order>1</order>
             <initial_condition>displacement0</initial_condition>
-            <boundary_conditions>
+            <boundary_conditions>          
                 <boundary_condition>
-                    <geometrical_set>single_joint</geometrical_set>
-                    <geometry>PLY_BOTTOM</geometry>
+                    <mesh>physical_group_bot_surf_fracture</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
+
                 <boundary_condition>
-                    <geometrical_set>single_joint</geometrical_set>
-                    <geometry>POINT0</geometry>
+                    <mesh>physical_group_fracture_fracture</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
+
                 <boundary_condition>
-                    <geometrical_set>single_joint</geometrical_set>
-                    <geometry>PLY_TOP</geometry>
+                    <mesh>physical_group_right_top_fracture</mesh>
+                    <type>Neumann</type>
+                    <component>1</component>
+                    <parameter>load</parameter>
+                <boundary_condition>
+
+                </boundary_condition>
+                    <mesh>physical_group_left_top_fracture</mesh>
+                    <type>Neumann</type>
+                    <component>1</component>
+                    <parameter>load</parameter>
+                </boundary_condition>
+
+                    <boundary_condition>
+                    <mesh>physical_group_right_bottom_fracture</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero_u</parameter>
+                <boundary_condition>
+
+                </boundary_condition>
+                    <mesh>physical_group_left_bottom_fracture</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero_u</parameter>
+                </boundary_condition>
+
+                <boundary_condition>
+                    <mesh>physical_group_top_surf_fracture</mesh>
                     <type>Neumann</type>
                     <component>1</component>
                     <parameter>load</parameter>
