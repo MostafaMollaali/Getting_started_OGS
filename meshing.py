@@ -62,13 +62,11 @@ def create_rectangle_frac_mesh(
     
     z = center_z
     
-    # Define points
     p1 = gmsh.model.occ.addPoint(0.0, z + height / 2, 0.0, mesh_size)
     p2 = gmsh.model.occ.addPoint(width, z + height / 2, 0.0, mesh_size)
     p3 = gmsh.model.occ.addPoint(width, z - height / 2, 0.0, mesh_size)
     p4 = gmsh.model.occ.addPoint(0.0, z - height / 2, 0.0, mesh_size)
     
-    # Fracture line
     angle_rad = math.radians(30.0)
     p5_x = 0.0
     p6_x = width
@@ -79,7 +77,6 @@ def create_rectangle_frac_mesh(
     p6 = gmsh.model.occ.addPoint(p6_x, p6_y, 0.0, mesh_size)
     gmsh.model.occ.synchronize()
     
-    # Define lines
     l1 = gmsh.model.occ.addLine(p2, p1)
     l2 = gmsh.model.occ.addLine(p1, p5)
     l3 = gmsh.model.occ.addLine(p5, p4)
@@ -89,39 +86,28 @@ def create_rectangle_frac_mesh(
     l7 = gmsh.model.occ.addLine(p6, p5)
     gmsh.model.occ.synchronize()
     
-    # Create surfaces
     cl1 = gmsh.model.occ.addCurveLoop([l1, l2, -l7, l6])
     surf1 = gmsh.model.occ.addPlaneSurface([cl1])
     cl2 = gmsh.model.occ.addCurveLoop([l4, l5, l7, l3])
     surf2 = gmsh.model.occ.addPlaneSurface([cl2])
     gmsh.model.occ.synchronize()
-    
+    gmsh.model.mesh.generate(2)
+
     if mode == "BC":
         bcs = [("top", l1), ("bottom", l4)]
         for name, line in bcs:
             pg = gmsh.model.addPhysicalGroup(1, [line])
             gmsh.model.setPhysicalName(1, pg, name)
-    
         gmsh.model.addPhysicalGroup(1, [l5, l6], name="right")
         gmsh.model.addPhysicalGroup(1, [l2, l3], name="left")
         gmsh.model.addPhysicalGroup(0, [p4], name="p4")
-    
+        gmsh.model.addPhysicalGroup(0, [p3], name="p3")
+      
     elif mode == "domain":
         gmsh.model.addPhysicalGroup(2, [surf1], name="top_surf")
         gmsh.model.addPhysicalGroup(2, [surf2], name="bot_surf")
         gmsh.model.addPhysicalGroup(1, [l7], name="fracture")
-     
-        gmsh.model.addPhysicalGroup(1, [l6], name="right_top")
-        gmsh.model.addPhysicalGroup(1, [l2], name="left_top")
-        gmsh.model.addPhysicalGroup(1, [l5], name="right_bottom")
-        gmsh.model.addPhysicalGroup(1, [l3], name="left_bottom")
-        gmsh.model.addPhysicalGroup(0, [p4], name="p4")
-        
-        gmsh.model.addPhysicalGroup(1, [l1], name="top")
-        gmsh.model.addPhysicalGroup(1, [l4], name="bottom")
-  
-
-    gmsh.model.mesh.generate(2)
+      
     gmsh.write(str(filepath.with_suffix(".msh")))
     gmsh.finalize()
 

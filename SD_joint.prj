@@ -4,17 +4,7 @@
         <mesh>domain_fracture.vtu</mesh>
         <mesh>physical_group_top_fracture.vtu</mesh>
         <mesh>physical_group_bottom_fracture.vtu</mesh>
-
-        <mesh>physical_group_fracture_fracture.vtu</mesh>
-        
-        <mesh>physical_group_top_surf_fracture.vtu</mesh>
-        <mesh>physical_group_bot_surf_fracture.vtu</mesh>
-
-        <mesh>physical_group_right_top_fracture.vtu</mesh>
-        <mesh>physical_group_left_top_fracture.vtu</mesh>
-
-        <mesh>physical_group_right_bottom_fracture.vtu</mesh>
-        <mesh>physical_group_left_bottom_fracture.vtu</mesh>
+        <mesh>physical_group_p4_fracture.vtu</mesh>
     </meshes>
 
     <processes>
@@ -39,7 +29,7 @@
                 <tension_cutoff>1</tension_cutoff>
             </fracture_model>
             <fracture_properties>
-                <material_id>2</material_id>
+                <material_id>0</material_id>
                 <initial_aperture>aperture0</initial_aperture>
             </fracture_properties>
             <secondary_variables>
@@ -85,16 +75,16 @@
                 </pair>
             </timesteps>
             <variables>
-                <variable>displacement</variable>
-                <variable>displacement_jump1</variable>
-                <variable>sigma</variable>
-                <variable>epsilon</variable>
-                <variable>fracture_stress</variable>
-                <variable>fracture_aperture</variable>
-                <variable>sigma_avg</variable>
-                <variable>local_jump_w_avg</variable>
-                <variable>fracture_stress_avg</variable>
-                <variable>fracture_aperture_avg</variable>
+<!--                <variable>displacement</variable>-->
+<!--                <variable>displacement_jump1</variable>-->
+<!--                <variable>sigma</variable>-->
+<!--                <variable>epsilon</variable>-->
+<!--                <variable>fracture_stress</variable>-->
+<!--                <variable>fracture_aperture</variable>-->
+<!--                <variable>sigma_avg</variable>-->
+<!--                <variable>local_jump_w_avg</variable>-->
+<!--                <variable>fracture_stress_avg</variable>-->
+<!--                <variable>fracture_aperture_avg</variable>-->
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
@@ -147,54 +137,25 @@
             <components>2</components>
             <order>1</order>
             <initial_condition>displacement0</initial_condition>
-            <boundary_conditions>          
+            <boundary_conditions>
                 <boundary_condition>
-                    <mesh>physical_group_bot_surf_fracture</mesh>
-                    <type>Dirichlet</type>
-                    <component>1</component>
-                    <parameter>zero_u</parameter>
-                </boundary_condition>
-
-                <boundary_condition>
-                    <mesh>physical_group_fracture_fracture</mesh>
-                    <type>Dirichlet</type>
-                    <component>0</component>
-                    <parameter>zero_u</parameter>
-                </boundary_condition>
-
-                <boundary_condition>
-                    <mesh>physical_group_right_top_fracture</mesh>
-                    <type>Neumann</type>
-                    <component>1</component>
-                    <parameter>load</parameter>
-                <boundary_condition>
-
-                </boundary_condition>
-                    <mesh>physical_group_left_top_fracture</mesh>
+                    <mesh>physical_group_top_fracture</mesh>
                     <type>Neumann</type>
                     <component>1</component>
                     <parameter>load</parameter>
                 </boundary_condition>
-
-                    <boundary_condition>
-                    <mesh>physical_group_right_bottom_fracture</mesh>
-                    <type>Dirichlet</type>
-                    <component>1</component>
-                    <parameter>zero_u</parameter>
+        
                 <boundary_condition>
-
-                </boundary_condition>
-                    <mesh>physical_group_left_bottom_fracture</mesh>
+                    <mesh>physical_group_bottom_fracture</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
-
                 <boundary_condition>
-                    <mesh>physical_group_top_surf_fracture</mesh>
-                    <type>Neumann</type>
-                    <component>1</component>
-                    <parameter>load</parameter>
+                        <mesh>physical_group_p4_fracture</mesh>
+                        <type>Dirichlet</type>
+                        <component>0</component>
+                        <parameter>zero_u</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
