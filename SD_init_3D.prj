@@ -27,7 +27,7 @@
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
             </secondary_variables>
-            <specific_body_force>0. 0 -9.81</specific_body_force>
+            <specific_body_force>0.0 0.0 0.0</specific_body_force>
            <initial_stress> sigma0 </initial_stress>
         </process>
     </processes>
@@ -119,19 +119,19 @@
             <value>300</value>
         </parameter>
         <parameter>
-          <name>sigma0</name>
-          <type>Function</type>
-          <expression>2000*9.81*z</expression>
-          <expression>2000*9.81*z</expression>
-          <expression>2000*9.81*z</expression>
-          <expression>0</expression>
-          <expression>0</expression>
-          <expression>0</expression>
+            <name>sigma0</name>
+            <type>Function</type>
+            <expression>2000*9.81*z</expression>
+            <expression>2000*9.81*z</expression>
+            <expression>2000*9.81*z</expression>
+            <expression>0</expression>
+            <expression>0</expression>
+            <expression>0</expression>
         </parameter>
         <parameter>
             <name>geo_stress</name>
             <type>Function</type>
-            <expression>-2000*9.81*z</expression>
+            <expression>2000*9.81*z</expression>
         </parameter>
     </parameters>
     <process_variables>
@@ -142,32 +142,6 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>cube_physical_group_left</mesh>
-                    <type>NormalTraction</type>
-                    <component>0</component>
-                    <parameter>geo_stress</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>cube_physical_group_right</mesh>
-                    <type>NormalTraction</type>
-                    <component>0</component>
-                    <parameter>geo_stress</parameter>
-                </boundary_condition>
-
-                <boundary_condition>
-                    <mesh>cube_physical_group_front</mesh>
-                    <type>NormalTraction</type>
-                    <component>1</component>
-                    <parameter>geo_stress</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>cube_physical_group_back</mesh>
-                    <type>NormalTraction</type>
-                    <component>1</component>
-                    <parameter>geo_stress</parameter>
-                </boundary_condition>
-
-                <boundary_condition>
                     <mesh>cube_physical_group_bottom</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
@@ -177,22 +151,20 @@
                     <mesh>cube_physical_group_bottom</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
-                    <parameter>zero</parameter>
+                    <parameter>zero</parameter> 
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>cube_physical_group_bottom</mesh>
                     <type>Dirichlet</type>
                     <component>2</component>
                     <parameter>zero</parameter>
-                </boundary_condition>
-
+                </boundary_condition> 
                 <boundary_condition>
                     <mesh>cube_physical_group_top</mesh>
-                    <type>NormalTraction</type>
+                    <type>Neumann</type>
                     <component>2</component>
                     <parameter>geo_stress</parameter>
                 </boundary_condition>
-
             </boundary_conditions>
         </process_variable>
     </process_variables>

@@ -29,7 +29,7 @@
                 <tension_cutoff>1</tension_cutoff>
             </fracture_model>
             <fracture_properties>
-                <material_id>0</material_id>
+                <material_id>2</material_id>
                 <initial_aperture>aperture0</initial_aperture>
             </fracture_properties>
             <secondary_variables>
@@ -75,16 +75,16 @@
                 </pair>
             </timesteps>
             <variables>
-<!--                <variable>displacement</variable>-->
-<!--                <variable>displacement_jump1</variable>-->
-<!--                <variable>sigma</variable>-->
-<!--                <variable>epsilon</variable>-->
-<!--                <variable>fracture_stress</variable>-->
-<!--                <variable>fracture_aperture</variable>-->
-<!--                <variable>sigma_avg</variable>-->
-<!--                <variable>local_jump_w_avg</variable>-->
-<!--                <variable>fracture_stress_avg</variable>-->
-<!--                <variable>fracture_aperture_avg</variable>-->
+                <variable>displacement</variable>
+                <variable>displacement_jump1</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+                <variable>fracture_stress</variable>
+                <variable>fracture_aperture</variable>
+                <variable>sigma_avg</variable>
+                <variable>local_jump_w_avg</variable>
+                <variable>fracture_stress_avg</variable>
+                <variable>fracture_aperture_avg</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
