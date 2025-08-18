@@ -166,13 +166,13 @@ def create_cube_mesh(
 
     s_bot   = gmsh.model.occ.addPlaneSurface([cl_bot])
     s_top   = gmsh.model.occ.addPlaneSurface([cl_top])
-    s_front = gmsh.model.occ.addPlaneSurface([cl_front])
-    s_back  = gmsh.model.occ.addPlaneSurface([cl_back])
+    s_back = gmsh.model.occ.addPlaneSurface([cl_front])
+    s_front  = gmsh.model.occ.addPlaneSurface([cl_back])
     s_left  = gmsh.model.occ.addPlaneSurface([cl_left])
     s_right = gmsh.model.occ.addPlaneSurface([cl_right])
     gmsh.model.occ.synchronize()
 
-    sl  = gmsh.model.occ.addSurfaceLoop([s_bot, s_top, s_front, s_back, s_left, s_right])
+    sl  = gmsh.model.occ.addSurfaceLoop([s_bot, s_top, s_back, s_front, s_left, s_right])
     vol = gmsh.model.occ.addVolume([sl])
     gmsh.model.occ.synchronize()
 
@@ -186,8 +186,8 @@ def create_cube_mesh(
     face_map = {
         "bottom": s_bot,
         "top":    s_top,
-        "front":  s_front,
-        "back":   s_back,
+        "back":  s_back,
+        "front":   s_front,
         "left":   s_left,
         "right":  s_right,
     }
