@@ -27,7 +27,7 @@
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
             </secondary_variables>
-            <specific_body_force>0.0 0.0 9.81</specific_body_force>
+            <specific_body_force>0.0 0.0 -9.81</specific_body_force>
            <initial_stress> sigma0 </initial_stress>
         </process>
     </processes>
@@ -141,6 +141,14 @@
             <order>1</order>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
+
+                <boundary_condition>
+                    <mesh>cube_physical_group_top</mesh>
+                    <type>Neumann</type>
+                    <component>2</component>
+                    <parameter>geo_stress</parameter>  
+                </boundary_condition>
+
                 <boundary_condition>
                     <mesh>cube_physical_group_bottom</mesh>
                     <type>Dirichlet</type>
@@ -162,12 +170,6 @@
                     <parameter>zero</parameter>
                 </boundary_condition>
 
-                <boundary_condition>
-                    <mesh>cube_physical_group_top</mesh>
-                    <type>Neumann</type>
-                    <component>2</component>
-                    <parameter>geo_stress</parameter> 
-                </boundary_condition>
             </boundary_conditions>
         </process_variable>
     </process_variables>
