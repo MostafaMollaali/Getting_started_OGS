@@ -127,7 +127,7 @@
         <parameter>
             <name>geo_stress</name>
             <type>Function</type>
-            <expression>2000*9.81*y</expression>
+            <expression>-2000*9.81*y</expression>
         </parameter>
     </parameters>
     <process_variables>

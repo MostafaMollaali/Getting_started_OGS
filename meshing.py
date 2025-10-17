@@ -1,6 +1,7 @@
 from pathlib import Path
 import gmsh
 import math
+import numpy as np
 
 def create_rectangle_mesh(
     filepath: Path,
@@ -51,7 +52,6 @@ def create_rectangle_frac_mesh(
     height: float,
     mesh_size: float,
     center_z: float = 0.0,
-    mode="domain",
 ) -> None:
 
     gmsh.initialize()
@@ -67,7 +67,7 @@ def create_rectangle_frac_mesh(
     p3 = gmsh.model.occ.addPoint(width, z - height / 2, 0.0, mesh_size)
     p4 = gmsh.model.occ.addPoint(0.0, z - height / 2, 0.0, mesh_size)
     
-    angle_rad = math.radians(30.0)
+    angle_rad = math.radians(50.0)
     p5_x = 0.0
     p6_x = width
     p5_y = z - width * math.tan(angle_rad) / 2
@@ -93,23 +93,74 @@ def create_rectangle_frac_mesh(
     gmsh.model.occ.synchronize()
     gmsh.model.mesh.generate(2)
 
-    if mode == "BC":
-        bcs = [("top", l1), ("bottom", l4)]
-        for name, line in bcs:
-            pg = gmsh.model.addPhysicalGroup(1, [line])
-            gmsh.model.setPhysicalName(1, pg, name)
-        gmsh.model.addPhysicalGroup(1, [l5, l6], name="right")
-        gmsh.model.addPhysicalGroup(1, [l2, l3], name="left")
-        gmsh.model.addPhysicalGroup(0, [p4], name="p4")
-        gmsh.model.addPhysicalGroup(0, [p3], name="p3")
+    bcs = [("top", l1), ("bottom", l4)]
+    for name, line in bcs:
+        pg = gmsh.model.addPhysicalGroup(1, [line])
+        gmsh.model.setPhysicalName(1, pg, name)
+    gmsh.model.addPhysicalGroup(1, [l5, l6], name="right")
+    gmsh.model.addPhysicalGroup(1, [l2, l3], name="left")
+    gmsh.model.addPhysicalGroup(0, [p4], name="p4")
+    gmsh.model.addPhysicalGroup(0, [p3], name="p3")
       
-    elif mode == "domain":
-        gmsh.model.addPhysicalGroup(2, [surf1], name="top_surf")
-        gmsh.model.addPhysicalGroup(2, [surf2], name="bot_surf")
-        gmsh.model.addPhysicalGroup(1, [l7], name="fracture")
+    gmsh.model.addPhysicalGroup(2, [surf1], name="top_surf")
+    gmsh.model.addPhysicalGroup(2, [surf2], name="bot_surf")
+    gmsh.model.addPhysicalGroup(1, [l7], name="fracture")
       
     gmsh.write(str(filepath.with_suffix(".msh")))
     gmsh.finalize()
+
+def domain_fracture_2D(
+    mesh,
+    top:  int=4,
+    bottom:  int=5,
+    fracture:  int=6, 
+    debug_id= False
+)-> None:
+
+    parent_mesh = mesh["domain"]
+    material_ids = parent_mesh["MaterialIDs"] # The pyvista_ndarray (cell data)
+    
+    if debug_id==False:
+        #Boolean Mask: True for IDs top, bottom, fracture
+        filter_mask = (material_ids == top) | (material_ids == bottom) | (material_ids == fracture)
+        
+        #Filtered and Recoded IDs Array
+        filtered_ids = material_ids[filter_mask]
+        
+        # Define recoding logic (top->0, bottom->1, fracture->2)
+        conditions = [filtered_ids == top, filtered_ids == bottom, filtered_ids == fracture]
+        choices = [0, 1, 2] #default IDs for OGS simmulator
+        recoded_ids = np.select(conditions, choices, default=filtered_ids)
+        
+        #Boolean mask as a temporary cell data array
+        # PyVista uses 0 for False and 1 for True
+        parent_mesh["selection_mask"] = filter_mask.astype(np.int8)
+        
+        # Threshold filter to extract only the cells where the mask is True (value > 0.5)
+        # This creates a NEW mesh object with the filtered connectivity and points.
+        filtered_mesh = parent_mesh.threshold(
+            value=0.5,           # Threshold value (keep cells where "selection_mask" > 0.5)
+            scalars="selection_mask",
+            invert=False
+        )
+        
+        #Removing temporary mask from the new mesh
+        del filtered_mesh.cell_data["selection_mask"]
+        
+        # Assign the recoded IDs to the new mesh
+        # The number of elements in recoded_ids MUST match the number of cells in filtered_mesh
+        filtered_mesh["MaterialIDs"] = recoded_ids
+        
+        return filtered_mesh
+        
+    else:
+        # Assuming parent_mesh is loaded #Debugging Material IDS
+        material_ids = parent_mesh["MaterialIDs"]
+        
+        # Print the unique IDs in the original mesh (before filtering)
+        print("Unique Material IDs in the parent_mesh:", np.unique(material_ids))
+
+
 
 def create_cube_mesh(
     filepath: Path,

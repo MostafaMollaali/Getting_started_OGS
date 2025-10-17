@@ -1,12 +1,11 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
-        <mesh>domain_fracture.vtu</mesh>
-        <mesh>physical_group_top_fracture.vtu</mesh>
-        <mesh>physical_group_bottom_fracture.vtu</mesh>
-        <mesh>physical_group_p4_fracture.vtu</mesh>
+        <mesh>frac_filtered_domain.vtu</mesh>
+        <mesh>frac_physical_group_top_bc.vtu</mesh>
+        <mesh>frac_physical_group_bottom_bc.vtu</mesh>
+        <!-- <mesh>frac_physical_group_p3_bc.vtu</mesh> -->
     </meshes>
-
     <processes>
         <process>
             <name>SD</name>
@@ -139,24 +138,24 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>physical_group_top_fracture</mesh>
+                    <mesh>frac_physical_group_top_bc</mesh>
                     <type>Neumann</type>
                     <component>1</component>
                     <parameter>load</parameter>
                 </boundary_condition>
         
                 <boundary_condition>
-                    <mesh>physical_group_bottom_fracture</mesh>
+                    <mesh>frac_physical_group_bottom_bc</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>zero_u</parameter>
                 </boundary_condition>
-                <boundary_condition>
-                        <mesh>physical_group_p4_fracture</mesh>
+                <!-- <boundary_condition>
+                        <mesh>frac_physical_group_p3_bc</mesh>
                         <type>Dirichlet</type>
                         <component>0</component>
                         <parameter>zero_u</parameter>
-                </boundary_condition>
+                </boundary_condition> -->
             </boundary_conditions>
         </process_variable>
         <process_variable>
